@@ -1,418 +1,143 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Club VIP - Minimarket</title>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Sans:wght@300;400;600;700&display=swap');
-*{margin:0;padding:0;box-sizing:border-box;}
-:root{--azul:#1A3A5C;--verde:#2D9E5F;--amarillo:#F7B731;--rojo:#D62828;--gris:#7A7A7A;}
-body{font-family:'IBM Plex Sans',sans-serif;background:#F4F1EC;min-height:100vh;display:flex;flex-direction:column;}
- 
-/* HEADER */
-.header{background:var(--azul);padding:20px;text-align:center;border-bottom:4px solid var(--amarillo);}
-.header .logo{font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--amarillo);letter-spacing:3px;}
-.header .logo span{color:white;}
-.header p{color:rgba(255,255,255,.7);font-size:13px;margin-top:2px;}
- 
-/* HERO */
-.hero{background:linear-gradient(135deg,var(--azul),#2D6A9F);color:white;padding:28px 20px;text-align:center;}
-.hero .badge{display:inline-block;background:var(--amarillo);color:var(--azul);font-weight:700;font-size:13px;padding:5px 16px;border-radius:20px;margin-bottom:14px;}
-.hero h1{font-family:'Bebas Neue',sans-serif;font-size:42px;letter-spacing:2px;line-height:1;margin-bottom:8px;}
-.hero h1 span{color:var(--amarillo);}
-.hero p{font-size:15px;opacity:.85;max-width:300px;margin:0 auto;}
-.descuento-chip{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.3);border-radius:50px;padding:10px 20px;margin-top:16px;font-size:18px;font-weight:700;}
-.descuento-chip .num{font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--amarillo);}
- 
-/* PASOS */
-.pasos{display:flex;justify-content:center;gap:0;padding:18px 20px;background:white;border-bottom:2px solid #e8e4de;}
-.paso{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;position:relative;}
-.paso:not(:last-child)::after{content:'';position:absolute;right:-1px;top:14px;width:2px;height:2px;background:none;}
-.paso-num{width:28px;height:28px;border-radius:50%;background:var(--azul);color:white;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;}
-.paso-num.done{background:var(--verde);}
-.paso-txt{font-size:10px;font-weight:600;color:var(--gris);text-align:center;text-transform:uppercase;letter-spacing:.5px;}
- 
-/* FORMULARIO */
-.container{flex:1;padding:24px 20px;max-width:480px;margin:0 auto;width:100%;}
-.card{background:white;border-radius:16px;padding:24px;box-shadow:0 4px 20px rgba(0,0,0,.08);margin-bottom:20px;}
-.card h2{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--azul);margin-bottom:4px;}
-.card p{font-size:13px;color:var(--gris);margin-bottom:18px;}
-.form-group{margin-bottom:16px;}
-.form-group label{display:block;font-size:12px;font-weight:700;color:var(--gris);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
-.form-group input{width:100%;padding:13px 16px;border:2px solid #e8e4de;border-radius:10px;font-family:'IBM Plex Sans',sans-serif;font-size:16px;transition:border-color .2s;}
-.form-group input:focus{outline:none;border-color:var(--azul);}
-.form-group .hint{font-size:11px;color:var(--gris);margin-top:4px;}
-.btn-registrar{width:100%;padding:16px;background:var(--verde);color:white;border:none;border-radius:12px;font-family:'IBM Plex Sans',sans-serif;font-size:17px;font-weight:700;cursor:pointer;transition:background .15s;display:flex;align-items:center;justify-content:center;gap:8px;}
-.btn-registrar:hover{background:#23834d;}
-.btn-registrar:disabled{background:#ccc;cursor:not-allowed;}
- 
-/* BENEFICIOS */
-.beneficios{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
-.beneficio{display:flex;align-items:center;gap:12px;background:white;border-radius:12px;padding:14px 16px;border-left:4px solid var(--amarillo);}
-.beneficio .ico{font-size:24px;flex-shrink:0;}
-.beneficio .txt strong{display:block;font-size:14px;font-weight:700;}
-.beneficio .txt span{font-size:12px;color:var(--gris);}
- 
-/* PANTALLA ÉXITO */
-.pantalla{display:none;}
-.pantalla.activa{display:block;}
-.success-card{background:white;border-radius:16px;padding:32px 24px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,.08);}
-.success-icon{font-size:72px;margin-bottom:16px;animation:bounce 1s ease;}
-@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
-.success-card h2{font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--verde);margin-bottom:8px;}
-.success-card p{font-size:15px;color:var(--gris);margin-bottom:20px;}
-.codigo-vip{background:var(--azul);color:white;border-radius:12px;padding:16px;margin:16px 0;}
-.codigo-vip .label{font-size:12px;opacity:.7;margin-bottom:4px;}
-.codigo-vip .codigo{font-family:'IBM Plex Mono',monospace;font-size:28px;font-weight:700;color:var(--amarillo);letter-spacing:4px;}
-.instruccion{background:#e8f5ee;border-radius:10px;padding:14px;font-size:14px;color:var(--verde);font-weight:600;margin-bottom:16px;}
- 
-/* YA REGISTRADO */
-.ya-reg-card{background:white;border-radius:16px;padding:24px;text-align:center;}
-.ya-reg-card .icon{font-size:48px;margin-bottom:12px;}
-.ya-reg-card h3{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--azul);margin-bottom:8px;}
-.estado-badge{display:inline-block;padding:6px 16px;border-radius:20px;font-size:13px;font-weight:700;margin-bottom:14px;}
-.estado-pendiente{background:#fff3e0;color:#b07800;}
-.estado-usado{background:#e8f5ee;color:var(--verde);}
- 
-/* LOADING */
-.loading{text-align:center;padding:40px;color:var(--gris);}
-.spinner{width:40px;height:40px;border:4px solid #e8e4de;border-top-color:var(--azul);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px;}
-@keyframes spin{to{transform:rotate(360deg)}}
- 
-/* FOOTER */
-footer{background:var(--azul);color:rgba(255,255,255,.5);text-align:center;padding:14px;font-size:11px;margin-top:auto;}
-footer strong{color:var(--amarillo);}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POS Panel - MiniMKT</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #1A3A5C; color: white; margin: 0; padding: 20px; }
+        .pos-container { max-width: 900px; margin: 0 auto; }
+        .header-pos { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #F7B731; padding-bottom: 10px; margin-bottom: 20px; }
+        
+        /* Notificación Alerta */
+        #alerta-nueva { display: none; background: #F7B731; color: #1A3A5C; padding: 15px; border-radius: 10px; margin-bottom: 20px; font-weight: bold; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
+
+        /* Tabla de Clientes */
+        .tabla-card { background: white; color: #333; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #f8f9fa; padding: 15px; text-align: left; border-bottom: 2px solid #eee; color: #1A3A5C; }
+        td { padding: 15px; border-bottom: 1px solid #eee; }
+        
+        .badge { padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .pendiente { background: #fff3e0; color: #e65100; }
+        .usado { background: #e8f5ee; color: #2D9E5F; }
+        
+        .btn-cobrar { background: #2D9E5F; color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .btn-cobrar:hover { background: #23834d; }
+        .btn-cobrar:disabled { background: #ccc; cursor: not-allowed; }
+    </style>
 </head>
 <body>
- 
-<div class="header">
-  <div class="logo">MINI<span>MKT</span></div>
-  <p>🇨🇱 Tu minimarket de confianza</p>
+
+<div class="pos-container">
+    <div class="header-pos">
+        <h2>🖥️ PANEL DE CAJA (VIP)</h2>
+        <div id="status-db">🟢 Conectado</div>
+    </div>
+
+    <div id="alerta-nueva">
+        🔔 NUEVO REGISTRO: <span id="nombre-alerta">---</span> (Código: <span id="codigo-alerta">---</span>)
+    </div>
+
+    <div class="tabla-card">
+        <table>
+            <thead>
+                <tr>
+                    <th>Cliente</th>
+                    <th>WhatsApp</th>
+                    <th>Código</th>
+                    <th>Estado</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody id="tabla-body">
+                </tbody>
+        </table>
+    </div>
 </div>
- 
-<div class="hero">
-  <div class="badge">⭐ CLUB VIP</div>
-  <h1>REGÍSTRATE Y<br><span>AHORRA</span></h1>
-  <p>Únete al club de clientes VIP y obtén beneficios exclusivos</p>
-  <div class="descuento-chip">
-    <span>🎁 Descuento de</span>
-    <span class="num">10%</span>
-    <span>en tu primera compra</span>
-  </div>
-</div>
- 
-<div class="pasos">
-  <div class="paso"><div class="paso-num done">1</div><div class="paso-txt">Escaneaste el QR</div></div>
-  <div class="paso"><div class="paso-num" id="paso2">2</div><div class="paso-txt">Te registras</div></div>
-  <div class="paso"><div class="paso-num" id="paso3">3</div><div class="paso-txt">¡Usas tu descuento!</div></div>
-</div>
- 
-<div class="container">
- 
-  <!-- LOADING -->
-  <div id="pantalla-loading" class="pantalla activa">
-    <div class="loading">
-      <div class="spinner"></div>
-      <div>Cargando...</div>
-    </div>
-  </div>
- 
-  <!-- FORMULARIO -->
-  <div id="pantalla-form" class="pantalla">
-    <div class="beneficios">
-      <div class="beneficio"><div class="ico">🎁</div><div class="txt"><strong>10% de descuento</strong><span>En tu primera compra al registrarte</span></div></div>
-      <div class="beneficio"><div class="ico">📱</div><div class="txt"><strong>Ofertas exclusivas</strong><span>Te avisamos por WhatsApp cuando hay promos</span></div></div>
-      <div class="beneficio"><div class="ico">⭐</div><div class="txt"><strong>Cliente VIP</strong><span>Trato preferencial y beneficios especiales</span></div></div>
-    </div>
- 
-    <div class="card">
-      <h2>¡Únete gratis!</h2>
-      <p>Solo necesitamos tus datos para registrarte</p>
- 
-      <div class="form-group">
-        <label>Tu nombre completo</label>
-        <input type="text" id="inp-nombre" placeholder="Ej: María González" autocomplete="name">
-      </div>
-      <div class="form-group">
-        <label>Tu WhatsApp</label>
-        <input type="tel" id="inp-wsp" placeholder="9 1234 5678" inputmode="numeric">
-        <div class="hint">📱 Solo el número, sin +56</div>
-      </div>
-      <div class="form-group">
-        <label>Tu correo (opcional)</label>
-        <input type="email" id="inp-email" placeholder="tu@email.com" autocomplete="email">
-      </div>
- 
-      <div id="form-error" style="background:#fde8e8;border-radius:8px;padding:10px;font-size:13px;color:var(--rojo);margin-bottom:12px;display:none"></div>
- 
-      <button class="btn-registrar" id="btn-registrar" onclick="registrarCliente()">
-        <span>🎁</span> <span>REGISTRARME Y OBTENER MI 10%</span>
-      </button>
- 
-      <p style="font-size:11px;color:var(--gris);text-align:center;margin-top:12px">
-        Al registrarte aceptas recibir ofertas por WhatsApp. Puedes cancelar cuando quieras.
-      </p>
-    </div>
-  </div>
- 
-  <!-- ÉXITO -->
-  <div id="pantalla-exito" class="pantalla">
-    <div class="success-card">
-      <div class="success-icon">🎉</div>
-      <h2>¡Ya eres VIP!</h2>
-      <p>Tu registro fue exitoso. Ahora muéstrale al cajero este mensaje:</p>
- 
-      <div class="instruccion">
-        📱 Muestra esta pantalla al cajero para activar tu <strong>10% de descuento</strong> en esta compra
-      </div>
- 
-      <div class="codigo-vip">
-        <div class="label">Tu código VIP</div>
-        <div class="codigo" id="codigo-display">VIP000</div>
-      </div>
- 
-      <div style="background:#f0f4f8;border-radius:10px;padding:14px;text-align:left;margin-bottom:16px">
-        <div style="font-size:13px;font-weight:700;margin-bottom:8px">Tu descuento incluye:</div>
-        <div style="font-size:13px;color:var(--gris)">✅ 10% de descuento en esta compra<br>✅ Ofertas exclusivas por WhatsApp<br>✅ Atención preferencial</div>
-      </div>
- 
-      <button onclick="window.location.reload()" style="background:var(--azul);color:white;border:none;border-radius:10px;padding:12px 24px;font-size:14px;font-weight:600;cursor:pointer;width:100%">
-        Registrar otro cliente
-      </button>
-    </div>
-  </div>
- 
-  <!-- YA REGISTRADO -->
-  <div id="pantalla-ya-reg" class="pantalla">
-    <div class="ya-reg-card">
-      <div class="icon">👋</div>
-      <h3>¡Hola de nuevo!</h3>
-      <p id="ya-reg-nombre" style="font-size:16px;font-weight:700;color:var(--azul);margin-bottom:8px"></p>
-      <div id="ya-reg-badge" class="estado-badge estado-pendiente"></div>
-      <p id="ya-reg-msg" style="font-size:14px;color:var(--gris);margin-bottom:16px"></p>
-      <div class="codigo-vip">
-        <div class="label">Tu código VIP</div>
-        <div class="codigo" id="ya-reg-codigo">VIP000</div>
-      </div>
-      <button onclick="irAFormulario()" style="background:#f0f4f8;color:var(--azul);border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:600;cursor:pointer;width:100%;margin-top:12px">
-        No soy yo — Registrar nuevo cliente
-      </button>
-    </div>
-  </div>
- 
-</div>
- 
-<footer>
-  Powered by <strong>MiniMKT POS</strong> · Sistema de fidelización de clientes
-</footer>
- 
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js" onload="fbSDKcargado()" onerror="fbSDKerror()"></script>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
 <script>
-var fbListo = false;
-var db = null;
- 
-function fbSDKerror() {
-  document.getElementById('pantalla-loading').innerHTML =
-    '<div style="text-align:center;padding:40px"><div style="font-size:48px;margin-bottom:16px">📶</div>' +
-    '<div style="font-size:16px;font-weight:700;color:#D62828;margin-bottom:8px">Sin conexión a internet</div>' +
-    '<div style="font-size:13px;color:#777">Necesitas estar conectado para registrarte.<br>Activa tu WiFi o datos móviles e intenta de nuevo.</div>' +
-    '<button onclick="location.reload()" style="margin-top:16px;padding:12px 24px;background:#1A3A5C;color:white;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer">🔄 Reintentar</button></div>';
-}
- 
-function fbSDKcargado() {
-  try {
-    var firebaseConfig = {
-      apiKey: 'AIzaSyDyxfsQwQcpyHf7VgISfDGrrAKU3CizEUI',
-      authDomain: 'minimarket-pos-b9920.firebaseapp.com',
-      databaseURL: 'https://minimarket-pos-b9920-default-rtdb.firebaseio.com',
-      projectId: 'minimarket-pos-b9920',
-      storageBucket: 'minimarket-pos-b9920.firebasestorage.app',
-      messagingSenderId: '545908921698',
-      appId: '1:545908921698:web:fd7e4650dbacf16f67883b'
-    };
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
+// CONFIGURACIÓN (Misma que tu formulario)
+const firebaseConfig = {
+    apiKey: 'AIzaSyDyxfsQwQcpyHf7VgISfDGrrAKU3CizEUI',
+    authDomain: 'minimarket-pos-b9920.firebaseapp.com',
+    databaseURL: 'https://minimarket-pos-b9920-default-rtdb.firebaseio.com',
+    projectId: 'minimarket-pos-b9920',
+    storageBucket: 'minimarket-pos-b9920.appspot.com',
+    messagingSenderId: '545908921698',
+    appId: '1:545908921698:web:fd7e4650dbacf16f67883b'
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// 1. ESCUCHAR NOTIFICACIONES (Alertas rápidas)
+db.ref('notificaciones/descuentoPendiente').on('value', (snap) => {
+    const data = snap.val();
+    if(data) {
+        document.getElementById('alerta-nueva').style.display = 'block';
+        document.getElementById('nombre-alerta').innerText = data.nombre;
+        document.getElementById('codigo-alerta').innerText = data.codigo;
+        
+        // Sonido de alerta opcional
+        const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+        audio.play().catch(() => {});
     }
-    db = firebase.database();
-    fbListo = true;
-    init();
-  } catch(e) {
-    fbSDKerror();
-  }
-}
- 
-// ============================================================
-// FIREBASE CONFIG - MINIMARKET POS DE AMAURY
-// ============================================================
-// Config ya definida arriba
- 
-// Firebase ya inicializado en fbSDKcargado()
- 
-// ============================================================
-// INIT - Verificar si el teléfono ya está registrado
-// ============================================================
-var telGuardado = null;
- 
-function mostrarPantalla(id) {
-  document.querySelectorAll('.pantalla').forEach(function(p){ p.classList.remove('activa'); });
-  document.getElementById(id).classList.add('activa');
-}
- 
-function init() {
-  // Intentar cargar teléfono guardado en localStorage
-  try {
-    telGuardado = localStorage.getItem('vip_tel');
-  } catch(e) {}
- 
-  if (telGuardado) {
-    // Buscar si ya está registrado
-    db.ref('clientesVIP').orderByChild('whatsapp').equalTo(telGuardado).once('value', function(snap) {
-      if (snap.exists()) {
-        var data = snap.val();
-        var key = Object.keys(data)[0];
-        var cliente = data[key];
-        mostrarYaRegistrado(cliente);
-      } else {
-        mostrarPantalla('pantalla-form');
-        document.getElementById('inp-wsp').value = telGuardado;
-      }
-    }, function() {
-      mostrarPantalla('pantalla-form');
+});
+
+// 2. CARGAR LISTADO DE CLIENTES
+function cargarClientes() {
+    db.ref('clientesVIP').on('value', (snap) => {
+        const tbody = document.getElementById('tabla-body');
+        tbody.innerHTML = '';
+        const data = snap.val();
+
+        if(data) {
+            // Convertir objeto a array y ordenar por los más recientes
+            const lista = Object.keys(data).map(key => ({...data[key], key: key}));
+            lista.reverse().forEach(cliente => {
+                const tr = document.createElement('tr');
+                const estadoTxt = cliente.descuentoUsado ? 'Usado' : 'Pendiente';
+                const estadoClass = cliente.descuentoUsado ? 'usado' : 'pendiente';
+                
+                tr.innerHTML = `
+                    <td><strong>${cliente.nombre}</strong></td>
+                    <td>${cliente.whatsapp}</td>
+                    <td><code style="background:#eee;padding:3px 6px;border-radius:4px">${cliente.codigo}</code></td>
+                    <td><span class="badge ${estadoClass}">${estadoTxt}</span></td>
+                    <td>
+                        <button class="btn-cobrar" 
+                                onclick="aplicarDescuento('${cliente.key}')" 
+                                ${cliente.descuentoUsado ? 'disabled' : ''}>
+                            ${cliente.descuentoUsado ? '✅ Aplicado' : '🎟️ Usar 10%'}
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
     });
-  } else {
-    mostrarPantalla('pantalla-form');
-  }
 }
- 
-function mostrarYaRegistrado(c) {
-  document.getElementById('ya-reg-nombre').textContent = c.nombre;
-  document.getElementById('ya-reg-codigo').textContent = c.codigo || 'VIP' + c.id.toString().slice(-3).toUpperCase();
- 
-  var badge = document.getElementById('ya-reg-badge');
-  var msg = document.getElementById('ya-reg-msg');
-  if (c.descuentoUsado) {
-    badge.className = 'estado-badge estado-usado';
-    badge.textContent = '✅ Ya usaste tu descuento';
-    msg.textContent = 'Igual puedes mostrar esta pantalla para que el cajero te tenga en cuenta. Estarás al tanto de todas nuestras ofertas.';
-  } else {
-    badge.className = 'estado-badge estado-pendiente';
-    badge.textContent = '🎁 Tienes un 10% pendiente de usar';
-    msg.textContent = 'Muéstrale esta pantalla al cajero para activar tu descuento ahora.';
-    // Notificar al POS
-    notificarPOS(c);
-  }
- 
-  document.getElementById('paso2').className = 'paso-num done';
-  mostrarPantalla('pantalla-ya-reg');
-}
- 
-function irAFormulario() {
-  try { localStorage.removeItem('vip_tel'); } catch(e) {}
-  mostrarPantalla('pantalla-form');
-  document.getElementById('inp-wsp').value = '';
-  document.getElementById('inp-nombre').value = '';
-}
- 
-// ============================================================
-// REGISTRAR CLIENTE
-// ============================================================
-function registrarCliente() {
-  var nombre = document.getElementById('inp-nombre').value.trim();
-  var wsp = document.getElementById('inp-wsp').value.trim().replace(/\D/g,'');
-  var email = document.getElementById('inp-email').value.trim();
-  var errEl = document.getElementById('form-error');
- 
-  errEl.style.display = 'none';
- 
-  if (!nombre || nombre.length < 2) {
-    errEl.textContent = '⚠ Ingresa tu nombre completo';
-    errEl.style.display = 'block'; return;
-  }
-  if (!wsp || wsp.length < 8) {
-    errEl.textContent = '⚠ Ingresa tu número de WhatsApp';
-    errEl.style.display = 'block'; return;
-  }
- 
-  var btn = document.getElementById('btn-registrar');
-  btn.disabled = true;
-  btn.innerHTML = '<div style="width:20px;height:20px;border:3px solid rgba(255,255,255,.4);border-top-color:white;border-radius:50%;animation:spin .8s linear infinite"></div> Registrando...';
- 
-  // Verificar si ya existe
-  db.ref('clientesVIP').orderByChild('whatsapp').equalTo(wsp).once('value', function(snap) {
-    if (snap.exists()) {
-      var data = snap.val();
-      var key = Object.keys(data)[0];
-      mostrarYaRegistrado(data[key]);
-      btn.disabled = false;
-      btn.innerHTML = '<span>🎁</span> <span>REGISTRARME Y OBTENER MI 10%</span>';
-      return;
+
+// 3. MARCAR COMO USADO
+function aplicarDescuento(key) {
+    if(confirm("¿Confirmas que aplicarás el 10% a este cliente?")) {
+        db.ref('clientesVIP/' + key).update({
+            descuentoUsado: true,
+            fechaUso: new Date().toLocaleString('es-CL'),
+            esperandoDescuento: false
+        }).then(() => {
+            // Limpiar la alerta si es el mismo cliente
+            document.getElementById('alerta-nueva').style.display = 'none';
+        });
     }
- 
-    // Crear nuevo cliente VIP
-    var nuevoId = Date.now();
-    var codigo = 'VIP' + String(nuevoId).slice(-4);
-    var cliente = {
-      id: nuevoId,
-      nombre: nombre,
-      whatsapp: wsp,
-      email: email || null,
-      fechaReg: new Date().toLocaleDateString('es-CL'),
-      horaReg: new Date().toLocaleTimeString('es-CL'),
-      descuentoUsado: false,
-      fechaUso: null,
-      montoDescuento: 0,
-      compras: 0,
-      codigo: codigo,
-      esperandoDescuento: true
-    };
- 
-    db.ref('clientesVIP/v' + nuevoId).set(cliente, function(error) {
-      if (error) {
-        errEl.textContent = '❌ Error al guardar. Intenta de nuevo.';
-        errEl.style.display = 'block';
-        btn.disabled = false;
-        btn.innerHTML = '<span>🎁</span> <span>REGISTRARME Y OBTENER MI 10%</span>';
-        return;
-      }
- 
-      // Guardar en localStorage
-      try { localStorage.setItem('vip_tel', wsp); } catch(e) {}
- 
-      // Mostrar éxito
-      document.getElementById('codigo-display').textContent = codigo;
-      document.getElementById('paso2').className = 'paso-num done';
-      document.getElementById('paso3').className = 'paso-num done';
-      mostrarPantalla('pantalla-exito');
- 
-      // Notificar al POS
-      notificarPOS(cliente);
-    });
-  }, function(error) {
-    errEl.textContent = '❌ Sin conexión. Verifica tu internet.';
-    errEl.style.display = 'block';
-    btn.disabled = false;
-    btn.innerHTML = '<span>🎁</span> <span>REGISTRARME Y OBTENER MI 10%</span>';
-  });
 }
- 
-// Notificar al POS que hay cliente esperando descuento
-function notificarPOS(cliente) {
-  db.ref('notificaciones/descuentoPendiente').set({
-    clienteId: cliente.id,
-    nombre: cliente.nombre,
-    codigo: cliente.codigo,
-    timestamp: Date.now()
-  });
-}
- 
-// ============================================================
-// INIT
-// ============================================================
-// init() se llama desde fbSDKcargado() cuando Firebase está listo
+
+cargarClientes();
 </script>
 </body>
 </html>
- 
