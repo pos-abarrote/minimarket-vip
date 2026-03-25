@@ -1,25 +1,35 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js" onload="verificarCarga()"></script>
 
 <script>
 var fbListo = false;
 var db = null;
 
-// Función para mostrar el error visualmente
 function fbSDKerror() {
-  const contenedor = document.getElementById('pantalla-loading');
-  if (contenedor) {
-    contenedor.innerHTML = `
-      <div style="text-align:center;padding:40px">
-        <div style="font-size:48px;margin-bottom:16px">📶</div>
-        <div style="font-size:16px;font-weight:700;color:#D62828;margin-bottom:8px">Error cargando sistema</div>
-        <div style="font-size:13px;color:#777">Verifica tu conexión o la configuración de Firebase.</div>
-        <button onclick="location.reload()" style="margin-top:16px;padding:12px 24px;background:#1A3A5C;color:white;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer">🔄 Reintentar</button>
+  const loader = document.getElementById('pantalla-loading');
+  if (loader) {
+    loader.innerHTML = `
+      <div style="text-align:center;padding:40px; font-family: sans-serif;">
+        <div style="font-size:48px;margin-bottom:16px">⚠️</div>
+        <div style="font-size:16px;font-weight:700;color:#D62828">Error de Conexión</div>
+        <p style="color:#666">No se pudo conectar con el servidor de la base de datos.</p>
+        <button onclick="location.reload()" style="margin-top:16px;padding:10px 20px;background:#1A3A5C;color:white;border:none;border-radius:8px;cursor:pointer">Reintentar</button>
       </div>`;
   }
 }
 
-function fbSDKcargado() {
+function verificarCarga() {
+  // Esperamos un momento extra para que el navegador procese los scripts cargados
+  setTimeout(() => {
+    if (typeof firebase !== "undefined") {
+      inicializarSistema();
+    } else {
+      fbSDKerror();
+    }
+  }, 300);
+}
+
+function inicializarSistema() {
   try {
     const firebaseConfig = {
       apiKey: "AIzaSyDyxfsQwQcpyHf7VgISfDGrrAKU3CizEUI",
@@ -31,34 +41,31 @@ function fbSDKcargado() {
       appId: "1:545908921698:web:fd7e4650dbacf16f67883b"
     };
 
-    // Inicializar Firebase
     if (!firebase.apps.length) {
       firebase.initializeApp(firebaseConfig);
     }
     
     db = firebase.database();
     fbListo = true;
-    console.log("Firebase conectado correctamente.");
+    console.log("✅ Firebase activo");
 
-    // Asegúrate de que la función init() existe en tu otro script
+    // Llama aquí a tu función de inicio principal
     if (typeof init === "function") {
       init();
     }
+    
   } catch(e) {
-    console.error("Error en la inicialización:", e);
+    console.error("Error al iniciar:", e);
     fbSDKerror();
   }
 }
 
-// Escuchar cuando el DOM y los scripts están listos
-document.addEventListener("DOMContentLoaded", function() {
-  // Pequeño retraso para asegurar que el objeto 'firebase' esté disponible
-  setTimeout(() => {
-    if (typeof firebase !== "undefined") {
-      fbSDKcargado();
-    } else {
-      fbSDKerror();
-    }
-  }, 500); 
+// Fallback por si el 'onload' del script falla por red lenta
+window.addEventListener('load', () => {
+  if (!fbListo) {
+    setTimeout(() => {
+      if (typeof firebase === "undefined") fbSDKerror();
+    }, 5000); // 5 segundos de espera máxima
+  }
 });
 </script>
