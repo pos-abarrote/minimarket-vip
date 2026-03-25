@@ -5,18 +5,23 @@
 var fbListo = false;
 var db = null;
 
+// Función para mostrar el error visualmente
 function fbSDKerror() {
-  document.getElementById('pantalla-loading').innerHTML =
-    '<div style="text-align:center;padding:40px">' +
-    '<div style="font-size:48px;margin-bottom:16px">📶</div>' +
-    '<div style="font-size:16px;font-weight:700;color:#D62828;margin-bottom:8px">Error cargando sistema</div>' +
-    '<div style="font-size:13px;color:#777">Recarga la página.</div>' +
-    '<button onclick="location.reload()" style="margin-top:16px;padding:12px 24px;background:#1A3A5C;color:white;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer">🔄 Reintentar</button></div>';
+  const contenedor = document.getElementById('pantalla-loading');
+  if (contenedor) {
+    contenedor.innerHTML = `
+      <div style="text-align:center;padding:40px">
+        <div style="font-size:48px;margin-bottom:16px">📶</div>
+        <div style="font-size:16px;font-weight:700;color:#D62828;margin-bottom:8px">Error cargando sistema</div>
+        <div style="font-size:13px;color:#777">Verifica tu conexión o la configuración de Firebase.</div>
+        <button onclick="location.reload()" style="margin-top:16px;padding:12px 24px;background:#1A3A5C;color:white;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer">🔄 Reintentar</button>
+      </div>`;
+  }
 }
 
 function fbSDKcargado() {
   try {
-    var firebaseConfig = {
+    const firebaseConfig = {
       apiKey: "AIzaSyDyxfsQwQcpyHf7VgISfDGrrAKU3CizEUI",
       authDomain: "minimarket-pos-b9920.firebaseapp.com",
       databaseURL: "https://minimarket-pos-b9920-default-rtdb.firebaseio.com",
@@ -26,23 +31,34 @@ function fbSDKcargado() {
       appId: "1:545908921698:web:fd7e4650dbacf16f67883b"
     };
 
-    firebase.initializeApp(firebaseConfig);
+    // Inicializar Firebase
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    
     db = firebase.database();
     fbListo = true;
+    console.log("Firebase conectado correctamente.");
 
-    init();
+    // Asegúrate de que la función init() existe en tu otro script
+    if (typeof init === "function") {
+      init();
+    }
   } catch(e) {
-    console.error(e);
+    console.error("Error en la inicialización:", e);
     fbSDKerror();
   }
 }
 
-// esperar a que cargue firebase
-window.onload = function() {
-  if (typeof firebase !== "undefined") {
-    fbSDKcargado();
-  } else {
-    fbSDKerror();
-  }
-};
-</script> 
+// Escuchar cuando el DOM y los scripts están listos
+document.addEventListener("DOMContentLoaded", function() {
+  // Pequeño retraso para asegurar que el objeto 'firebase' esté disponible
+  setTimeout(() => {
+    if (typeof firebase !== "undefined") {
+      fbSDKcargado();
+    } else {
+      fbSDKerror();
+    }
+  }, 500); 
+});
+</script>
