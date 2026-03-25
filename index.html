@@ -1,71 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimarket POS - Sistema de Inventario</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f7f6; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { color: #1A3A5C; text-align: center; font-size: 24px; }
+        .form-group { margin-bottom: 15px; }
+        input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: #1A3A5C; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        button:hover { background: #2a5a8a; }
+        #lista-productos { margin-top: 20px; }
+        .producto-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #eee; background: #fff; margin-bottom: 5px; border-radius: 6px; }
+        .producto-info b { display: block; color: #1A3A5C; }
+        .producto-precio { color: #2a9d8f; font-weight: bold; font-size: 1.1em; }
+        #pantalla-loading { text-align: center; padding: 50px 0; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🛒 Minimarket POS</h1>
+
+    <div id="pantalla-loading">
+        <p>Conectando con la base de datos...</p>
+    </div>
+
+    <div id="app-main" style="display: none;">
+        <div class="form-group">
+            <input type="text" id="nombreProd" placeholder="Nombre del producto (ej: Arroz 1kg)">
+        </div>
+        <div style="display: flex; gap: 10px;" class="form-group">
+            <input type="number" id="precioProd" placeholder="Precio">
+            <input type="number" id="stockProd" placeholder="Stock">
+        </div>
+        <button onclick="guardarProducto()">➕ Agregar al Inventario</button>
+
+        <div id="lista-productos">
+            </div>
+    </div>
+</div>
+
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js" onload="verificarCarga()"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
 <script>
 var fbListo = false;
 var db = null;
 
-function fbSDKerror() {
-  const loader = document.getElementById('pantalla-loading');
-  if (loader) {
-    loader.innerHTML = `
-      <div style="text-align:center;padding:40px; font-family: sans-serif;">
-        <div style="font-size:48px;margin-bottom:16px">⚠️</div>
-        <div style="font-size:16px;font-weight:700;color:#D62828">Error de Conexión</div>
-        <p style="color:#666">No se pudo conectar con el servidor de la base de datos.</p>
-        <button onclick="location.reload()" style="margin-top:16px;padding:10px 20px;background:#1A3A5C;color:white;border:none;border-radius:8px;cursor:pointer">Reintentar</button>
-      </div>`;
-  }
+// 1. Configuración de Firebase
+const firebaseConfig = {
+    apiKey: "AIzaSyDyxfsQwQcpyHf7VgISfDGrrAKU3CizEUI",
+    authDomain: "minimarket-pos-b9920.firebaseapp.com",
+    databaseURL: "https://minimarket-pos-b9920-default-rtdb.firebaseio.com",
+    projectId: "minimarket-pos-b9920",
+    storageBucket: "minimarket-pos-b9920.appspot.com",
+    messagingSenderId: "545908921698",
+    appId: "1:545908921698:web:fd7e4650dbacf16f67883b"
+};
+
+// 2. Función Principal de Inicio
+function init() {
+    console.log("🚀 Sistema listo.");
+    document.getElementById('pantalla-loading').style.display = 'none';
+    document.getElementById('app-main').style.display = 'block';
+    escucharProductos();
 }
 
-function verificarCarga() {
-  // Esperamos un momento extra para que el navegador procese los scripts cargados
-  setTimeout(() => {
-    if (typeof firebase !== "undefined") {
-      inicializarSistema();
+// 3. Guardar en Base de Datos
+function guardarProducto() {
+    const nombre = document.getElementById('nombreProd').value;
+    const precio = document.getElementById('precioProd').value;
+    const stock = document.getElementById('stockProd').value;
+
+    if(nombre && precio && stock) {
+        db.ref('productos').push({
+            nombre: nombre,
+            precio: parseFloat(precio),
+            stock: parseInt(stock),
+            fecha: Date.now()
+        });
+        // Limpiar campos
+        document.getElementById('nombreProd').value = '';
+        document.getElementById('precioProd').value = '';
+        document.getElementById('stockProd').value = '';
     } else {
-      fbSDKerror();
+        alert("Por favor completa todos los campos");
     }
-  }, 300);
 }
 
-function inicializarSistema() {
-  try {
-    const firebaseConfig = {
-      apiKey: "AIzaSyDyxfsQwQcpyHf7VgISfDGrrAKU3CizEUI",
-      authDomain: "minimarket-pos-b9920.firebaseapp.com",
-      databaseURL: "https://minimarket-pos-b9920-default-rtdb.firebaseio.com",
-      projectId: "minimarket-pos-b9920",
-      storageBucket: "minimarket-pos-b9920.appspot.com",
-      messagingSenderId: "545908921698",
-      appId: "1:545908921698:web:fd7e4650dbacf16f67883b"
-    };
+// 4. Leer de la Base de Datos en tiempo real
+function escucharProductos() {
+    db.ref('productos').on('value', (snapshot) => {
+        const contenedor = document.getElementById('lista-productos');
+        contenedor.innerHTML = '<h3>Inventario Actual</h3>';
+        const data = snapshot.val();
 
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-    }
-    
-    db = firebase.database();
-    fbListo = true;
-    console.log("✅ Firebase activo");
-
-    // Llama aquí a tu función de inicio principal
-    if (typeof init === "function") {
-      init();
-    }
-    
-  } catch(e) {
-    console.error("Error al iniciar:", e);
-    fbSDKerror();
-  }
+        if (data) {
+            Object.keys(data).reverse().forEach((id) => {
+                const p = data[id];
+                contenedor.innerHTML += `
+                    <div class="producto-item">
+                        <div class="producto-info">
+                            <b>${p.nombre}</b>
+                            <small>Stock disponible: ${p.stock}</small>
+                        </div>
+                        <div class="producto-precio">$${p.precio}</div>
+                    </div>
+                `;
+            });
+        } else {
+            contenedor.innerHTML += '<p style="color:#999">No hay productos registrados.</p>';
+        }
+    });
 }
 
-// Fallback por si el 'onload' del script falla por red lenta
-window.addEventListener('load', () => {
-  if (!fbListo) {
+// 5. Lógica de carga robusta
+function fbSDKerror() {
+    document.getElementById('pantalla-loading').innerHTML = `
+        <div style="color:#D62828; font-weight:bold;">❌ Error al cargar Firebase</div>
+        <button onclick="location.reload()" style="width:auto; margin-top:10px;">Reintentar</button>`;
+}
+
+window.onload = function() {
     setTimeout(() => {
-      if (typeof firebase === "undefined") fbSDKerror();
-    }, 5000); // 5 segundos de espera máxima
-  }
-});
+        if (typeof firebase !== "undefined") {
+            try {
+                if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+                db = firebase.database();
+                fbListo = true;
+                init();
+            } catch(e) {
+                console.error(e);
+                fbSDKerror();
+            }
+        } else {
+            fbSDKerror();
+        }
+    }, 800);
+};
 </script>
+
+</body>
+</html>
